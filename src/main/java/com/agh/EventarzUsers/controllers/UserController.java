@@ -4,8 +4,6 @@ import com.agh.EventarzUsers.exceptions.UserNotFoundException;
 import com.agh.EventarzUsers.model.BanForm;
 import com.agh.EventarzUsers.model.User;
 import com.agh.EventarzUsers.services.UserService;
-import io.github.resilience4j.retry.annotation.Retry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,23 +22,23 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/users")
-    @Retry(name = "getUsersByNameRetry")
     public List<User> getUsersByName(@RequestParam String name) {
         return userService.getUsersByName(name);
     }
 
     @PostMapping("/users")
-    @Retry(name = "createUserRetry")
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
     @GetMapping("/users/{username}")
-    @Retry(name = "getUserByUsernameRetry")
     public User getUserByUsername(@PathVariable String username) {
         try {
             return userService.getUserByUsername(username);
@@ -50,13 +48,11 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{username}")
-    @Retry(name = "deleteUserRetry")
     public void deleteUser(@PathVariable String username) {
         userService.deleteUser(username);
     }
 
     @RequestMapping(method = RequestMethod.HEAD, value = "/users/{username}")
-    @Retry(name = "getUserUuidByUsernameRetry")
     public void checkIfUserExists(@PathVariable String username) {
         try {
             userService.checkIfUserExists(username);
@@ -66,7 +62,6 @@ public class UserController {
     }
 
     @GetMapping("/users/{username}/securityDetails")
-    @Retry(name = "getSecurityDetailsRetry")
     public String getPasswordHash(@PathVariable String username) {
         try {
             return userService.getPasswordHash(username);

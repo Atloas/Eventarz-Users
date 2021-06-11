@@ -4,7 +4,6 @@ import com.agh.EventarzUsers.exceptions.UserNotFoundException;
 import com.agh.EventarzUsers.model.BanForm;
 import com.agh.EventarzUsers.model.User;
 import com.agh.EventarzUsers.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +11,11 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public List<User> getUsersByName(String name) {
         List<User> users = userRepository.findByUsernameLikeIgnoreCase(name);

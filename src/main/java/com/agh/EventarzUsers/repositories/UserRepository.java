@@ -1,6 +1,8 @@
 package com.agh.EventarzUsers.repositories;
 
 import com.agh.EventarzUsers.model.User;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -11,6 +13,9 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
+// TODO: I don't actually use those methods much so the Retry and CircuitBreaker probably dn't really work?
+@Retry(name = "UserRepositoryRetry")
+@CircuitBreaker(name = "UserRepositoryCircuitBreaker")
 public interface UserRepository extends CrudRepository<User, String> {
 
     User findByUsername(String username);
