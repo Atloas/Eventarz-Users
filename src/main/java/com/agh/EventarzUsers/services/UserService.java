@@ -4,11 +4,15 @@ import com.agh.EventarzUsers.exceptions.UserNotFoundException;
 import com.agh.EventarzUsers.model.BanForm;
 import com.agh.EventarzUsers.model.User;
 import com.agh.EventarzUsers.repositories.UserRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Retry(name = "UserServiceRetry")
+@CircuitBreaker(name = "UserServiceCircuitBreaker")
 public class UserService {
 
     private final UserRepository userRepository;
@@ -17,8 +21,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getUsersByName(String name) {
-        List<User> users = userRepository.findByUsernameLikeIgnoreCase(name);
+    public List<User> findUsersByUsername(String name) {
+        List<User> users = userRepository.findByUsernameLikeIgnoreCase("%" + name + "%");
         return users;
     }
 
@@ -60,6 +64,8 @@ public class UserService {
             throw new UserNotFoundException("User " + username + " not found!");
         }
         user.setBanned(banForm.isBanned());
+        // Save necessary
+        user = userRepository.save(user);
         return user;
     }
 }

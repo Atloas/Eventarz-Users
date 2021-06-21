@@ -13,9 +13,6 @@ import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
-// TODO: I don't actually use those methods much so the Retry and CircuitBreaker probably dn't really work?
-@Retry(name = "UserRepositoryRetry")
-@CircuitBreaker(name = "UserRepositoryCircuitBreaker")
 public interface UserRepository extends CrudRepository<User, String> {
 
     User findByUsername(String username);
