@@ -1,7 +1,6 @@
 package com.agh.EventarzUsers.controllers;
 
 import com.agh.EventarzUsers.exceptions.UserNotFoundException;
-import com.agh.EventarzUsers.model.BanForm;
 import com.agh.EventarzUsers.model.User;
 import com.agh.EventarzUsers.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -71,9 +70,9 @@ public class UserController {
     }
 
     @PutMapping("users/{username}/securityDetails/banned")
-    public User changeBanStatus(@PathVariable String username, @RequestBody BanForm banForm) {
+    public User changeBanStatus(@PathVariable String username, @RequestBody boolean banned) {
         try {
-            return userService.changeBanStatus(username, banForm);
+            return userService.changeBanStatus(username, banned);
         } catch (UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found!", e);
         }
