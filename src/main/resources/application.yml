@@ -11,6 +11,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+eureka:
+  instance:
+    preferIpAddress: true
+
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
